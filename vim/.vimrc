@@ -1,41 +1,46 @@
-" NOTE: i do not use vim, i use neovim. my neovim configuration files can be found in foxerlot/nodtvim
-let g:mapleader = " "
-let g:maplocalleader = " "
-syntax on
-
+let mapleader=" "
+let maplocalleader=" "
 set number
 set relativenumber
-set numberwidth=4
+set ruler
 set autoindent
 set smartindent
-set copyindent
-set expandtab
 set tabstop=4
-set shiftwidth=4
 set softtabstop=4
-
-set ruler
-set nocursorline
-set nocursorcolumn
-set wrap
-set noshowmode
-set sidescroll=5
-set sidescrolloff=3
-set scrolloff=3
-set noerrorbells
-set nohlsearch
-set noshowmatch
-set backspace=indent,start
+set shiftwidth=4
+set expandtab
+set termguicolors
+syntax enable
+colorscheme catppuccin_mocha
+set cursorline
+set showmatch
+set incsearch
+set ignorecase
+set smartcase
 set list
-set listchars=trail:⋅
-set completeopt=menu,menuone,noselect
+set listchars=leadmultispace:\\u2502\\u0020\\u0020\\u0020,trail:⋅
+set fillchars=vert:\\u2502,eob:\\u0020
+set backspace-=eol
+set laststatus=2
 set mousehide
 
+augroup AutoNoHl
+    autocmd!
+    autocmd CmdLineLeave /,\? set nohlsearch
+    autocmd CmdLineEnter /,\? set hlsearch
+augroup END
+
+nnoremap <silent> <Leader>e :Ve<CR>
+nnoremap < <<
+nnoremap > >>
+
+inoremap ( ()<left>
+inoremap [ []<left>
 inoremap { {}<left>
-inoremap <expr> <CR> strpart(getline('.'), col('.')-1, 1) == "}" ? "<CR><CR><ESC>kS" : "<CR>"
+inoremap <expr> ) strpart(getline('.'), col('.')-1, 1) == ")" ? "<right>" : ")"
+inoremap <expr> ] strpart(getline('.'), col('.')-1, 1) == "]" ? "<right>" : "]"
 inoremap <expr> } strpart(getline('.'), col('.')-1, 1) == "}" ? "<right>" : "}"
+inoremap <expr> <CR> strpart(getline('.'), col('.')-1, 1) == "}" ? "<CR><CR><ESC>kS" : "<CR>"
 
-nnoremap <Leader>w <C-w>
-nnoremap <Leader>e :Vexplore<CR>
-
-vnoremap <Leader>h y:<C-u>help <C-r>0<CR>
+vnoremap <silent> <Leader>h y:help <C-r>0<CR>
+vnoremap <Leader>/ y/<C-r>0
