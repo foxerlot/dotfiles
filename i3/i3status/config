@@ -1,0 +1,42 @@
+general {
+    colors = true
+    color_good = "#00ff00"
+    color_degraded = "#ff8000"
+    color_bad = "#ff0000"
+    interval = 1
+    separator = "|"
+}
+
+order += "time"
+order += "battery 0"
+order += "memory"
+order += "wireless wlp9s0"
+order += "ethernet enp8s0"
+order += "cpu_temperature 0"
+
+time {
+    format = "%d - %I:%M"
+}
+
+battery 0 {
+    format = "%percentage"
+    path = "/sys/class/power_supply/BAT1/uevent"
+}
+
+memory {
+    format = "%used"
+}
+
+wireless wlp9s0 {
+    format_up = "%quality - %bitrate"
+}
+
+ethernet enp8s0 {
+    format_up = "%speed"
+    format_down = ""
+}
+
+cpu_temperature 0 {
+    format = "%degrees °C"
+    path = "/sys/devices/platform/coretemp.0/hwmon/hwmon8/temp1_input"
+}
