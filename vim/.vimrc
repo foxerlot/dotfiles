@@ -40,7 +40,7 @@ inoremap { {}<left>
 inoremap <expr> ) strpart(getline('.'), col('.')-1, 1) == ")" ? "<right>" : ")"
 inoremap <expr> ] strpart(getline('.'), col('.')-1, 1) == "]" ? "<right>" : "]"
 inoremap <expr> } strpart(getline('.'), col('.')-1, 1) == "}" ? "<right>" : "}"
-inoremap <expr> <CR> strpart(getline('.'), col('.')-1, 1) == "}" ? "<CR><CR><ESC>kS" : "<CR>"
+inoremap <expr> <CR> strpart(getline('.'), col('.')-1, 1) == "}" ? "<CR><CR><BS><ESC>kS" : "<CR>"
 
 vnoremap <silent> <Leader>h y:help <C-r>0<CR>
 vnoremap <Leader>/ y/<C-r>0
