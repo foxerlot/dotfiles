@@ -8,27 +8,28 @@ general {
 }
 
 order += "time"
-order += "battery 0"
 order += "memory"
+order += "battery BAT1"
 order += "wireless wlp9s0"
 order += "ethernet enp8s0"
-order += "cpu_temperature 0"
+order += "cpu_temperature 10"
 
 time {
     format = "%d - %I:%M"
-}
-
-battery 0 {
-    format = "%percentage"
-    path = "/sys/class/power_supply/BAT1/uevent"
 }
 
 memory {
     format = "%used"
 }
 
+battery BAT1 {
+    path = "/sys/class/power_supply/BAT1/uevent"
+    format = "%percentage"
+}
+
 wireless wlp9s0 {
     format_up = "%quality - %bitrate"
+    format_down = ""
 }
 
 ethernet enp8s0 {
@@ -36,7 +37,6 @@ ethernet enp8s0 {
     format_down = ""
 }
 
-cpu_temperature 0 {
-    format = "%degrees °C"
-    path = "/sys/devices/platform/coretemp.0/hwmon/hwmon8/temp1_input"
+cpu_temperature 10 {
+    format = "%degrees°C"
 }
