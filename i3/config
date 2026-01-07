@@ -2,12 +2,17 @@
 set $mod Mod4
 font pango:NimbusSans-Regular 14
 
+gaps inner 7
+
 # startup applications
 exec --no-startup-id dex --autostart --environment i3
 exec --no-startup-id xss-lock --transfer-sleep-lock -- i3lock --nofork
+exec_always --no-startup-id bash -x ~/.config/polybar/launch.sh
 exec --no-startup-id nm-applet
+exec --no-startup-id /home/gregory/Downloads/software/media-controls-applet/media-controls.sh
+exec --no-startup-id /home/gregory/Downloads/software/alternating-layouts/alternating-layouts.py
 exec --no-startup-id feh --bg-scale /home/gregory/Pictures/backgrounds/snow-capped-mountians-italy.png
-exec --no-startup-id picom
+exec_always --no-startup-id picom --corner-radius 10 --config /home/gregory/.config/picom/picom.conf
 exec --no-startup-id xrandr --dpi 110
 
 set $refresh_i3status killall -SIGUSR1 i3status
@@ -23,8 +28,11 @@ tiling_drag modifier titlebar
 bindsym $mod+Shift+t exec kitty
 bindsym $mod+Shift+w exec brave
 bindsym $mod+Shift+f exec thunar
+bindsym $mod+Shift+v exec kitty vim
+bindsym $mod+Shift+s exec spotify-launcher
+bindsym $mod+Shift+m exec mousepad
 bindsym $mod+Shift+q kill
-bindsym $mod+d exec --no-startup-id dmenu_run
+bindsym $mod+Shift+r exec --no-startup-id rofi -show run
 
 bindsym $mod+h focus left
 bindsym $mod+j focus down
@@ -49,7 +57,7 @@ bindsym $mod+e layout toggle split
 bindsym $mod+Shift+space floating toggle
 
 bindsym $mod+Shift+c reload
-bindsym $mod+Shift+r restart
+bindsym $mod+c restart
 bindsym $mod+Shift+e exec "i3-nagbar -t warning -m 'You pressed the exit shortcut. Do you really want to exit i3? This will end your X session.' -B 'Yes, exit i3' 'i3-msg exit'"
 
 # workspaces
@@ -79,13 +87,13 @@ mode "resize" {
 bindsym $mod+r mode "resize"
 
 # i3bar
-bar {
-    colors {
-        background #353535
-        statusline #ffffff
-        separator #ffffff
-    }
-    position top
-
-    status_command i3status 
-}
+# bar {
+#     colors {
+#         background #353535
+#         statusline #ffffff
+#         separator #ffffff
+#     }
+#     position top
+# 
+#     status_command i3status 
+# }
