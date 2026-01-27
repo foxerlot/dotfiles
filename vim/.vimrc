@@ -12,9 +12,11 @@ set termguicolors
 set background=dark
 set cursorline
 set showmatch
+set hlsearch
 set incsearch
 set ignorecase
 set smartcase
+set noshowmatch
 set list
 set listchars=tab:\\u2502\\u0020,leadmultispace:\\u2502\\u0020\\u0020\\u0020
 set fillchars=eob:\\u0020
@@ -22,11 +24,22 @@ set laststatus=2
 set showcmd
 set mousehide
 set nowrap
+set wrapscan
+set matchtime=0
 set mouse=a
-filetype plugin on
+set belloff=all
+set noerrorbells
+set novisualbell
+set nocp
+set signcolumn=yes
+set autoread
+set noautowrite
+set history=200
+set sidescroll=5
 filetype indent on
+filetype plugin on
 syntax enable
-colorscheme slate
+colorscheme gruvbox
 
 set makeprg=gcc\ -Wall\ -Wextra\ -Wpedantic\ -std=c23\ %\ -o\ %:r
 
@@ -53,6 +66,22 @@ function! GrepPrompt()
 	redraw!
 endfunction
 
+function! SmartBackspace() abort
+	let line = getline('.')
+	let column = col('.') - 1
+
+	if column <= 0
+		return "\<BS>"
+	endif
+
+	let prev2 = line[column-1 : column]
+	if prev2 =~# '()\|\[\]\|{}'
+		return "\<BS>\<C-O>dl"
+	endif
+
+	return "\<BS>"
+endfunction
+
 nnoremap <silent> <leader>e :Ve<CR>
 nnoremap <silent> <leader>t :term<CR>
 nnoremap <silent> <leader>w <C-w>
@@ -64,6 +93,10 @@ nnoremap < <<
 nnoremap > >>
 nnoremap <C-a> ggVG
 nnoremap <C-c> "+y
+nnoremap <M-h> <C-w>h
+nnoremap <M-j> <C-w>j
+nnoremap <M-k> <C-w>k
+nnoremap <M-l> <C-w>l
 
 inoremap ( ()<left>
 inoremap [ []<left>
@@ -71,7 +104,8 @@ inoremap { {}<left>
 inoremap <expr> ) strpart(getline('.'), col('.')-1, 1) == ")" ? "<right>" : ")"
 inoremap <expr> ] strpart(getline('.'), col('.')-1, 1) == "]" ? "<right>" : "]"
 inoremap <expr> } strpart(getline('.'), col('.')-1, 1) == "}" ? "<right>" : "}"
-inoremap <expr> <CR> strpart(getline('.'), col('.')-1, 1) == "}" ? "<CR><BS><ESC>O" : "<CR>"
+" inoremap <expr> <CR> strpart(getline('.'), col('.')-1, 1) =~ '[)}]' ? "\n\n\<ESC>O" : "\<CR>"
+inoremap <expr> <BS> SmartBackspace()
 inoremap <C-n> <down>
 inoremap <C-p> <up>
 inoremap <C-f> <right>
@@ -86,3 +120,13 @@ vnoremap > >gv
 vnoremap <C-j> :m '>+1<CR>gv=gv
 vnoremap <C-k> :m '<-2<CR>gv=gv
 vnoremap <C-c> "+y
+vnoremap <M-h> <C-w>h
+vnoremap <M-j> <C-w>j
+vnoremap <M-k> <C-w>k
+vnoremap <M-l> <C-w>l
+
+tnoremap <M-h> <C-\><C-n><C-w>h
+tnoremap <M-j> <C-\><C-n><C-w>j
+tnoremap <M-k> <C-\><C-n><C-w>k
+tnoremap <M-l> <C-\><C-n><C-w>l
+tnoremap <C-\><C-\> <C-\><C-n>:q!<CR>
