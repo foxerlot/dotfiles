@@ -1,178 +1,124 @@
 vim.cmd([[
 let mapleader=" "
 let maplocalleader=" "
-set number
 set relativenumber
+set number
 set ruler
+set autoindent
+set smartindent
+set tabstop=4
+set softtabstop=4
+set shiftwidth=4
+set termguicolors
+set background=dark
+set cursorline
+set showmatch
 set hlsearch
 set incsearch
 set ignorecase
 set smartcase
-set wrapscan
-set history=200
-set showcmd
-set noshowmode
-set nowrap
-set sidescroll=5
+set noshowmatch
 set list
 set listchars=tab:\\u2502\\u0020,leadmultispace:\\u2502\\u0020\\u0020\\u0020
 set fillchars=eob:\\u0020,vert:\\u2502
-set noautowrite
-set autoindent
-set smartindent
-set expandtab
-set shiftwidth=4
-set tabstop=4
-set softtabstop=4
-set noshowmatch
-set matchtime=0
 set laststatus=2
-set termguicolors
-syntax on
-set cursorline
+set showcmd
 set mousehide
+set nowrap
+set wrapscan
+set matchtime=0
 set mouse=a
+set belloff=all
 set noerrorbells
 set novisualbell
-set belloff=all
-set completeopt=menuone,noinsert,noselect
 set nocp
 set signcolumn=yes
+set autoread
+set noautowrite
+set history=200
+set sidescroll=5
+filetype indent on
 filetype plugin on
-set makeprg=gcc\ -std=c23\ -Wall\ -Wextra\ -Wpedantic\ -g\ %
+syntax enable
+" colorscheme gruvbox
 
-augroup AutoNoHl
-    autocmd!
-    autocmd CmdLineLeave /,\? set nohlsearch
-    autocmd CmdLineEnter /,\? set hlsearch
+set makeprg=gcc\ -Wall\ -Wextra\ -Wpedantic\ -std=c23\ %\ -o\ %:r
+
+augroup RunCode
+	autocmd!
+	autocmd FileType c      nnoremap <buffer> <silent> <F5> :!./%:r<CR>
+	autocmd FileType python nnoremap <buffer> <silent> <F5> :!python3 %<CR>
 augroup END
 
+augroup QuickfixEnterClose
+	autocmd!
+	autocmd FileType qf nnoremap <buffer> <silent> <CR> <CR>:cclose<CR>
+augroup END
+
+function! GrepPrompt()
+	let l:pattern = input('Search: ')
+	if empty(l:pattern)
+		return
+	endif
+
+	let l:escaped = escape(l:pattern, '\/.*$^~[]')
+	execute 'silent grep ' . l:escaped . ' %'
+	cwindow
+	redraw!
+endfunction
+
+nnoremap <silent> <leader>e :Ve<CR>
+nnoremap <silent> <leader>t :term<CR>
+nnoremap <silent> <leader>w <C-w>
+nnoremap <silent> <leader>m :silent !rm -rf %:r<CR>:make<CR>:cwindow<CR>
+nnoremap <leader>s :call GrepPrompt()<CR>
 nnoremap <silent> <C-j> :m+1<CR>
 nnoremap <silent> <C-k> :m-2<CR>
-nnoremap <silent> <C-a> ggVG
-nnoremap <silent> <F5> :silent !rm -rf ./a.out<CR>:make<CR>:!./a.out<CR>
-nnoremap <silent> <leader>e :Ve<CR>
+nnoremap <silent> gd :lua vim.lsp.buf.definition()<CR>
 nnoremap < <<
 nnoremap > >>
+nnoremap <C-a> ggVG
+nnoremap <C-c> "+y
+nnoremap <M-h> <C-w>h
+nnoremap <M-j> <C-w>j
+nnoremap <M-k> <C-w>k
+nnoremap <M-l> <C-w>l
 
-vnoremap <silent> <leader>h y:help <C-r>0<CR>
-vnoremap <silent> <leader>/ y/<C-r>0<CR>
+inoremap <C-n> <down>
+inoremap <C-p> <up>
+inoremap <C-f> <right>
+inoremap <C-b> <left>
+inoremap <C-a> <C-o>0
+inoremap <C-e> <C-o>$
+inoremap <C-m> <CR>
+
+vnoremap <silent> <leader>h "zy:help <C-r>z<CR>
+vnoremap < <gv
+vnoremap > >gv
+vnoremap <C-j> :m '>+1<CR>gv=gv
+vnoremap <C-k> :m '<-2<CR>gv=gv
+vnoremap <C-c> "+y
+vnoremap <M-h> <C-w>h
+vnoremap <M-j> <C-w>j
+vnoremap <M-k> <C-w>k
+vnoremap <M-l> <C-w>l
+
+tnoremap <M-h> <C-\><C-n><C-w>h
+tnoremap <M-j> <C-\><C-n><C-w>j
+tnoremap <M-k> <C-\><C-n><C-w>k
+tnoremap <M-l> <C-\><C-n><C-w>l
+tnoremap <C-\><C-\> <C-\><C-n>:q!<CR>
 
 call plug#begin()
 
-Plug 'windwp/nvim-autopairs'
-Plug 'nvim-lualine/lualine.nvim'
-Plug 'luisiacc/gruvbox-baby', {'branch': 'main'}
-Plug 'alec-gibson/nvim-tetris'
-Plug 'nvim-telescope/telescope.nvim'
-Plug 'nvim-lua/plenary.nvim'
-Plug 'MunifTanjim/nui.nvim'
-Plug 'kawre/leetcode.nvim'
+Plug 'morhetz/gruvbox'
+Plug 'lilydjwg/colorizer'
+Plug 'jiangmiao/auto-pairs'
 
-call plug#end()
+cal plug#end()
 
-colorscheme gruvbox-baby
+colorscheme gruvbox
 ]])
-
-require("nvim-autopairs").setup {}
-require('lualine').setup()
-require('leetcode').setup {
-    ---@type string
-    arg = "leetcode.nvim",
-
-    ---@type lc.lang
-    lang = "c",
-
-    cn = { -- leetcode.cn
-        enabled = false, ---@type boolean
-        translator = true, ---@type boolean
-        translate_problems = true, ---@type boolean
-    },
-
-    ---@type lc.storage
-    storage = {
-        home = vim.fn.stdpath("data") .. "/leetcode",
-        cache = vim.fn.stdpath("cache") .. "/leetcode",
-    },
-
-    ---@type table<string, boolean>
-    plugins = {
-        non_standalone = false,
-    },
-
-    ---@type boolean
-    logging = true,
-
-    injector = {}, ---@type table<lc.lang, lc.inject>
-
-    cache = {
-        update_interval = 60 * 60 * 24 * 7, ---@type integer 7 days
-    },
-
-    editor = {
-        reset_previous_code = true, ---@type boolean
-        fold_imports = true, ---@type boolean
-    },
-
-    console = {
-        open_on_runcode = true, ---@type boolean
-
-        dir = "row", ---@type lc.direction
-
-        size = { ---@type lc.size
-            width = "90%",
-            height = "75%",
-        },
-
-        result = {
-            size = "60%", ---@type lc.size
-        },
-
-        testcase = {
-            virt_text = true, ---@type boolean
-
-            size = "40%", ---@type lc.size
-        },
-    },
-
-    description = {
-        position = "left", ---@type lc.position
-
-        width = "40%", ---@type lc.size
-
-        show_stats = true, ---@type boolean
-    },
-
-    ---@type lc.picker
-    picker = { provider = nil },
-
-    hooks = {
-        ---@type fun()[]
-        ["enter"] = {},
-
-        ---@type fun(question: lc.ui.Question)[]
-        ["question_enter"] = {},
-
-        ---@type fun()[]
-        ["leave"] = {},
-    },
-
-    keys = {
-        toggle = { "q" }, ---@type string|string[]
-        confirm = { "<CR>" }, ---@type string|string[]
-
-        reset_testcases = "r", ---@type string
-        use_testcase = "U", ---@type string
-        focus_testcases = "H", ---@type string
-        focus_result = "L", ---@type string
-    },
-
-    ---@type lc.highlights
-    theme = {},
-
-    ---@type boolean
-    image_support = false,
-}
 
 vim.lsp.config['lua_ls'] = {
     cmd = { 'lua-language-server' },
@@ -192,6 +138,7 @@ vim.lsp.config['lua_ls'] = {
         },
     },
 }
+
 vim.lsp.config['clangd'] = {
     cmd = { "clangd", "--background-index", "--clang-tidy", "--completion-style=detailed", "--header-insertion=iwyu", "--offset-encoding=utf-16"},
     filetypes = { 'c', 'cpp', 'h', 'hpp' },
