@@ -19,6 +19,7 @@ set list
 set listchars=tab:\\u2502\\u0020,leadmultispace:\\u2502\\u0020\\u0020\\u0020
 set fillchars=eob:\\u0020
 set laststatus=2
+set showcmd
 set mousehide
 set nowrap
 set mouse=a
@@ -62,6 +63,7 @@ nnoremap <silent> <C-k> :m-2<CR>
 nnoremap < <<
 nnoremap > >>
 nnoremap <C-a> ggVG
+nnoremap <C-c> "+y
 
 inoremap ( ()<left>
 inoremap [ []<left>
