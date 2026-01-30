@@ -42,7 +42,7 @@ filetype plugin on
 syntax enable
 " colorscheme gruvbox
 
-set makeprg=gcc\ -Wall\ -Wextra\ -Wpedantic\ -std=c23\ %\ -o\ %:r
+set makeprg=gcc\ -Wall\ -Wextra\ -Wpedantic\ -std=c23\ -g\ %\ -o\ %:r
 
 augroup RunCode
 	autocmd!
@@ -50,10 +50,10 @@ augroup RunCode
 	autocmd FileType python nnoremap <buffer> <silent> <F5> :!python3 %<CR>
 augroup END
 
-augroup QuickfixEnterClose
-	autocmd!
-	autocmd FileType qf nnoremap <buffer> <silent> <CR> <CR>:cclose<CR>
-augroup END
+"augroup QuickfixEnterClose
+"	autocmd!
+"	autocmd FileType qf nnoremap <buffer> <silent> <CR> <CR>:cclose<CR>
+"augroup END
 
 function! GrepPrompt()
 	let l:pattern = input('Search: ')
@@ -68,13 +68,14 @@ function! GrepPrompt()
 endfunction
 
 nnoremap <silent> <leader>e :Ve<CR>
-nnoremap <silent> <leader>t :term<CR>
+nnoremap <silent> <leader>t :vert term<CR>
 nnoremap <silent> <leader>w <C-w>
 nnoremap <silent> <leader>m :silent !rm -rf %:r<CR>:make<CR>:cwindow<CR>
 nnoremap <leader>s :call GrepPrompt()<CR>
 nnoremap <silent> <C-j> :m+1<CR>
 nnoremap <silent> <C-k> :m-2<CR>
 nnoremap <silent> gd :lua vim.lsp.buf.definition()<CR>
+nnoremap <silent> gD :lua vim.diagnostic.open_float()<CR>
 nnoremap < <<
 nnoremap > >>
 nnoremap <C-a> ggVG
@@ -107,7 +108,8 @@ tnoremap <M-h> <C-\><C-n><C-w>h
 tnoremap <M-j> <C-\><C-n><C-w>j
 tnoremap <M-k> <C-\><C-n><C-w>k
 tnoremap <M-l> <C-\><C-n><C-w>l
-tnoremap <C-\><C-\> <C-\><C-n>:q!<CR>
+tnoremap <M-q> <C-\><C-n>:q!<CR>
+tnoremap <M-n> <C-\><C-n>
 
 call plug#begin()
 
@@ -147,5 +149,5 @@ vim.lsp.config['clangd'] = {
 vim.lsp.enable({'lua_ls', 'clangd'})
 
 vim.diagnostic.config({
-  virtual_text = true,
+	virtual_text = true,
 })
