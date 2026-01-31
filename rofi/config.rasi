@@ -1,0 +1,41 @@
+@theme "nord"
+
+configuration {
+    modi: "window,drun,filebrowser";
+    sidebar-mode: true;
+    show-icons: false;
+    sort: true;
+    sorting-method: "normal";
+    disable-history: false;
+    scroll-method: 0;
+    drun-display-format: "{name}";
+    matching: "fuzzy";
+    window-thumbnail: true;
+    display-drun: "Apps";
+    display-window: "Windows";
+    display-filebrowser: "Files";
+    dpi: 110;
+
+    filebrowser {
+        directories-first: true;
+        sorting-method: "name";
+    }
+}
+
+mainbox {
+    children: [ mode-switcher, inputbar, listview ];
+    orientation: vertical;
+}
+
+mode-switcher {
+    spacing: 5px;
+    border-radius: 10px;
+    background-color: inherit;
+    text-color: inherit;
+    margin: 10px 0 10px 0;
+}
+
+button {
+    background-color: @nord1;
+    border-radius: 20px;
+}
