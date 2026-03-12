@@ -1,102 +1,31 @@
-let mapleader=" "
-let maplocalleader=" "
-set relativenumber
+let g:mapleader = " "
+let g:maplocalleader = " "
 set number
-set ruler
+set relativenumber
 set autoindent
 set smartindent
-set tabstop=4
-set softtabstop=4
-set shiftwidth=4
-set termguicolors
+set cindent
+set nocompatible
 set background=dark
-set cursorline
-set showmatch
-set hlsearch
-set incsearch
-set ignorecase
-set smartcase
-set noshowmatch
-set list
-set listchars=tab:\\u2502\\u0020,leadmultispace:\\u2502\\u0020\\u0020\\u0020
-set fillchars=eob:\\u0020
-set laststatus=2
-set showcmd
-set mousehide
-set nowrap
-set wrapscan
-set matchtime=0
-set mouse=a
 set belloff=all
-set noerrorbells
 set novisualbell
-set nocp
-set signcolumn=yes
-set autoread
-set noautowrite
-set history=200
-set sidescroll=5
+set noerrorbells
+set cursorline
+set expandtab
+set shiftwidth=4
+set tabstop=4
+set list
+set listchars=tab:\\u2502\\u0020,space:⋅,leadmultispace:\\u2502\\u0020\\u0020\\u0020
+set fillchars=vert:\\u2503
+set mouse=a
+set showcmd
+set showmode
+set termguicolors
+set warn
+set nowrap
 filetype indent on
 filetype plugin on
 syntax enable
-colorscheme gruvbox
-
-set makeprg=gcc\ -Wall\ -Wextra\ -Wpedantic\ -std=c23\ %\ -o\ %:r
-
-augroup RunCode
-	autocmd!
-	autocmd FileType c      nnoremap <buffer> <silent> <F5> :!./%:r<CR>
-	autocmd FileType python nnoremap <buffer> <silent> <F5> :!python3 %<CR>
-augroup END
-
-augroup QuickfixEnterClose
-	autocmd!
-	autocmd FileType qf nnoremap <buffer> <silent> <CR> <CR>:cclose<CR>
-augroup END
-
-function! GrepPrompt()
-	let l:pattern = input('Search: ')
-	if empty(l:pattern)
-		return
-	endif
-
-	let l:escaped = escape(l:pattern, '\/.*$^~[]')
-	execute 'silent grep ' . l:escaped . ' %'
-	cwindow
-	redraw!
-endfunction
-
-function! SmartBackspace() abort
-	let line = getline('.')
-	let column = col('.') - 1
-
-	if column <= 0
-		return "\<BS>"
-	endif
-
-	let prev2 = line[column-1 : column]
-	if prev2 =~# '()\|\[\]\|{}'
-		return "\<BS>\<C-O>dl"
-	endif
-
-	return "\<BS>"
-endfunction
-
-nnoremap <silent> <leader>e :Ve<CR>
-nnoremap <silent> <leader>t :term<CR>
-nnoremap <silent> <leader>w <C-w>
-nnoremap <silent> <leader>m :silent !rm -rf %:r<CR>:make<CR>:cwindow<CR>
-nnoremap <leader>s :call GrepPrompt()<CR>
-nnoremap <silent> <C-j> :m+1<CR>
-nnoremap <silent> <C-k> :m-2<CR>
-nnoremap < <<
-nnoremap > >>
-nnoremap <C-a> ggVG
-nnoremap <C-c> "+y
-nnoremap <M-h> <C-w>h
-nnoremap <M-j> <C-w>j
-nnoremap <M-k> <C-w>k
-nnoremap <M-l> <C-w>l
 
 inoremap ( ()<left>
 inoremap [ []<left>
@@ -104,29 +33,68 @@ inoremap { {}<left>
 inoremap <expr> ) strpart(getline('.'), col('.')-1, 1) == ")" ? "<right>" : ")"
 inoremap <expr> ] strpart(getline('.'), col('.')-1, 1) == "]" ? "<right>" : "]"
 inoremap <expr> } strpart(getline('.'), col('.')-1, 1) == "}" ? "<right>" : "}"
-" inoremap <expr> <CR> strpart(getline('.'), col('.')-1, 1) =~ '[)}]' ? "\n\n\<ESC>O" : "\<CR>"
-inoremap <expr> <BS> SmartBackspace()
-inoremap <C-n> <down>
-inoremap <C-p> <up>
-inoremap <C-f> <right>
-inoremap <C-b> <left>
-inoremap <C-a> <C-o>0
-inoremap <C-e> <C-o>$
-inoremap <C-m> <CR>
+inoremap <C-x> <C-o>
+inoremap <C-o> <esc>O
 
-vnoremap <silent> <leader>h "zy:help <C-r>z<CR>
+nnoremap <C-a> ggVG
+nnoremap <leader>t :term<CR>
+nnoremap <silent> <leader>m :make<CR>:cwindow<CR>
+nnoremap <leader>e :Ve<CR>
+nnoremap <C-d> 15jzz
+nnoremap <C-u> 15kzz
+nnoremap <C-b>n :bnext<CR>
+nnoremap <C-b>p :bprevious<CR>
+nnoremap <C-b>d :bdelete<CR>
+nnoremap <C-b>l :buffers<CR>
+
 vnoremap < <gv
 vnoremap > >gv
-vnoremap <C-j> :m '>+1<CR>gv=gv
-vnoremap <C-k> :m '<-2<CR>gv=gv
 vnoremap <C-c> "+y
-vnoremap <M-h> <C-w>h
-vnoremap <M-j> <C-w>j
-vnoremap <M-k> <C-w>k
-vnoremap <M-l> <C-w>l
 
-tnoremap <M-h> <C-\><C-n><C-w>h
-tnoremap <M-j> <C-\><C-n><C-w>j
-tnoremap <M-k> <C-\><C-n><C-w>k
-tnoremap <M-l> <C-\><C-n><C-w>l
-tnoremap <C-\><C-\> <C-\><C-n>:q!<CR>
+cnoremap <C-b> <left>
+cnoremap <C-n> <down>
+cnoremap <C-p> <up>
+cnoremap <C-f> <right>
+cnoremap <C-a> <home>
+cnoremap <C-e> <end>
+
+call plug#begin()
+
+Plug 'tpope/vim-fugitive'
+Plug 'tpope/vim-surround'
+Plug 'tpope/vim-commentary'
+Plug 'tpope/vim-sensible'
+Plug 'tpope/vim-abolish'
+" Plug 'jiangmiao/auto-pairs'
+Plug 'morhetz/gruvbox'
+Plug 'lilydjwg/colorizer'
+Plug 'junegunn/vim-easy-align'
+Plug 'mattn/emmet-vim'
+Plug 'google/vim-searchindex'
+
+call plug#end()
+
+colorscheme gruvbox
+xmap ga <Plug>(EasyAlign)
+nmap ga <Plug>(EasyAlign)
+set noautowrite
+
+highlight StlInsert  ctermbg=magenta ctermfg=black
+highlight StlVisual  ctermbg=blue ctermfg=black
+highlight StlCommand ctermbg=green ctermfg=black
+highlight StlFile    ctermbg=gray ctermfg=black
+highlight StlNormal  ctermbg=black
+
+function! ModeHL()
+    if mode() ==# 'i'
+        return '%#StlInsert#'
+    elseif mode() ==# 'v' || mode() ==# 'V' || mode() ==# "\<C-v>"
+        return '%#StlVisual#'
+    elseif mode() ==# 'c'
+        return '%#StlCommand#'
+    endif
+    return "%#StlNormal#"
+endfunction
+
+set statusline=%#StlFile#%f\ %{%ModeHL()%}%m%r%=%#StlFile#\ %S%{&fileencoding?&fileencoding:&encoding}%y[%l\:%c]
+
