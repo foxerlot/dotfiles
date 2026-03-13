@@ -14,6 +14,7 @@ set cursorline
 set expandtab
 set shiftwidth=4
 set tabstop=4
+set ignorecase
 set list
 set listchars=tab:\\u2502\\u0020,space:⋅,leadmultispace:\\u2502\\u0020\\u0020\\u0020
 set fillchars=vert:\\u2503
@@ -86,7 +87,7 @@ nnoremap <C-a> ggVG
 nnoremap <leader>t :term<CR>
 nnoremap <silent> <leader>m :make<CR>:cwindow<CR>
 nnoremap <leader>e :Ve<CR>
-nnoremap <leader>x :%!xxd<CR>
+nnoremap <leader>x :%!xxd -g 1<CR>:setlocal syntax=xxd<CR>:syntax match xxdNull /\<00\>/<CR>:highlight xxdNull ctermfg=gray<CR>
 nnoremap <silent> <C-j> :m+1<CR>==
 nnoremap <silent> <C-k> :m-2<CR>==
 nnoremap <C-d> 15jzz
@@ -155,3 +156,7 @@ endfunction
 
 set statusline=%#StlFile#%f\ %{%ModeHL()%}%m%r%=%{&fileencoding?&fileencoding:&encoding}\ %#StlFile#%S%y[%l\:%c]
 
+augroup VimlOpts
+    autocmd!
+    autocmd filetype vim nnoremap <buffer> <silent> <leader>m :w<CR>:so<CR>
+augroup END
