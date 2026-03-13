@@ -1,55 +1,29 @@
-# Lines configured by zsh-newuser-install
-HISTFILE=~/.histfile
-HISTSIZE=1000
-SAVEHIST=1000
-bindkey -e
-# End of lines configured by zsh-newuser-install
-# The following lines were added by compinstall
-zstyle :compinstall filename '/home/gregory/.zshrc'
+alias ls='ls --color=auto'
+alias ll="ls -lAh"
+alias grep="grep --color=auto"
+alias top="top -stats pid,user,time,mem,cpu,th,command -o +pid -s 5"
+alias gcc='gcc-15'
+alias cc='gcc-15'
+alias :q="exit"
+alias :so="source"
 
-autoload -Uz compinit
-compinit
-# End of lines added by compinstall
-
-unalias listlines 2>/dev/null
-unalias listlinesgit 2>/dev/null
-listlines() {
-  local args=()
-  for ignore in "$@"; do
-    args+=(! -path "*/$ignore/*" ! -name "$ignore")
-  done
-
-  find . -type f "${args[@]}" -print0 | xargs -0 wc -l
-}
-listlinesgit() {
-  local ignores=(
-    ".git"
-    ".gitignore"
-    ".gitattributes"
-    ".gitmodules"
-    ".gitkeep"
-    "README"
-    "README.md"
-    "README.txt"
-    "LICENSE"
-    "LICENSE.md"
-    "LICENSE.txt"
-  )
-
-  local args=()
-  for ignore in "${ignores[@]}" "$@"; do
-    args+=(! -path "*/$ignore/*" ! -name "$ignore")
-  done
-
-  find . -type f "${args[@]}" -print0 | xargs -0 wc -l
+extract() {
+	case "$1" in
+		*.tar.bz2) tar xjf "$1" ;;
+		*.tar.gz)  tar xzf "$1" ;;
+		*.zip)     unzip "$1" ;;
+		*.rar)     unrar x "$1" ;;
+		*) echo "Don't know how to extract $1" ;;
+	esac
 }
 
-alias ls="ls --color"
-alias lsl="ls -lah --color"
-alias aptupdate="sudo apt update -y ; sudo apt upgrade -y ; sudo apt autoremove -y"
+PROMPT=" %~ $ "
 
-PROMPT="%K{22}%T%k%K{133}%F{22}%f%k%K{133}%n@%m%k%K{33}%F{133}%f%k%K{33}%d%k%F{33}%f "
-RPROMPT=""
+export PATH="/opt/homebrew/opt/openjdk/bin:$PATH"
+export PATH="/opt/homebrew/Cellar/gcc/15.2.0_1/bin:$PATH"
+export PATH="$HOME/.ghcup/bin:$PATH"
+export EDITOR=vim
+export VISUAL=vim
+export PAGER=less
+alias vi="vim"
 
-export PATH="$PATH:/snap/bin"
-export PATH="$PATH:/home/gregory/Downloads/nvim-linux-x86_64/bin"
