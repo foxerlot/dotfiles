@@ -17,7 +17,7 @@ extract() {
 	esac
 }
 
-PROMPT=" %~ $ "
+PROMPT=" %~ %F{black}$%f "
 
 export PATH="/opt/homebrew/opt/openjdk/bin:$PATH"
 export PATH="/opt/homebrew/Cellar/gcc/15.2.0_1/bin:$PATH"
@@ -27,3 +27,22 @@ export VISUAL=vim
 export PAGER=less
 alias vi="vim"
 
+source $(brew --prefix)/opt/zsh-vi-mode/share/zsh-vi-mode/zsh-vi-mode.plugin.zsh
+
+# The plugin will auto execute this zvm_after_select_vi_mode function
+function zvm_after_select_vi_mode() {
+  case $ZVM_MODE in
+    $ZVM_MODE_NORMAL)
+        PROMPT=" %~ %F{black}$%f "
+    ;;
+    $ZVM_MODE_INSERT)
+        PROMPT=" %~ %F{magenta}$%f "
+    ;;
+    $ZVM_MODE_VISUAL)
+        PROMPT=" %~ %F{blue}$%f "
+    ;;
+    $ZVM_MODE_VISUAL_LINE)
+        PROMPT=" %~ %F{blue}$%f "
+    ;;
+  esac
+}
