@@ -36,7 +36,9 @@ function! SmartPair(key)
     elseif a:key == "("
         return "()\<left>"
     endif
+
     let l:next = strpart(getline('.'), col('.')-1, 1)
+
     if a:key == ")" && l:next == ")"
         return "\<right>"
     elseif a:key == "]" && l:next == "]"
@@ -50,6 +52,7 @@ function! SmartPair(key)
     elseif a:key == "'"
         return "''\<left>"
     endif
+
     return a:key
 endfunction
 
@@ -82,6 +85,7 @@ inoremap <expr> " SmartPair('"')
 inoremap <expr> <CR> SmartCR()
 inoremap <expr> <BS> SmartBS()
 inoremap <C-o> <esc>O
+inoremap <C-x> <C-o>
 
 nnoremap <C-a> ggVG
 nnoremap <leader>t :term<CR>
@@ -98,6 +102,8 @@ nnoremap <C-b>d :bdelete<CR>
 nnoremap <C-b>l :buffers<CR>
 nnoremap <C-,> 3<C-w><
 nnoremap <C-.> 3<C-w>>
+nnoremap zj <C-e>
+nnoremap zk <C-y>
 
 vnoremap < <gv
 vnoremap > >gv
@@ -115,6 +121,14 @@ cnoremap <C-a> <home>
 cnoremap <C-e> <end>
 cnoremap <C-x> <C-f>
 
+snoremap <C-b> <left>
+snoremap <C-n> <down>
+snoremap <C-p> <up>
+snoremap <C-f> <right>
+snoremap <C-a> <home>
+snoremap <C-e> <end>
+snoremap <C-x> <esc>
+
 call plug#begin()
 
 Plug 'tpope/vim-fugitive'
@@ -128,7 +142,7 @@ Plug 'junegunn/vim-easy-align'
 Plug 'mattn/emmet-vim'
 Plug 'google/vim-searchindex'
 Plug 'jeetsukumaran/vim-buffergator'
-Plug 'mg979/vim-visual-multi', {'branch': 'master'}
+Plug 'foxerlot/scratch-shell.vim'
 
 call plug#end()
 
@@ -160,3 +174,7 @@ augroup VimlOpts
     autocmd!
     autocmd filetype vim nnoremap <buffer> <silent> <leader>m :w<CR>:so<CR>
 augroup END
+
+nnoremap <leader>cc  :ScratchPrompt<CR>
+nnoremap <leader>cm :ScratchPrompt cd ..<CR>
+nnoremap <leader>cr :ScratchRepeat<CR>
