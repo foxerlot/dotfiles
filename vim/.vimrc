@@ -1,5 +1,8 @@
 let g:mapleader = " "
 let g:maplocalleader = " "
+let g:netrw_banner = 0
+let g:netrw_liststyle = 1
+let g:netrw_sort_by = "exten"
 set number
 set relativenumber
 set autoindent
@@ -20,14 +23,16 @@ set listchars=tab:\\u2502\\u0020,space:⋅,leadmultispace:\\u2502\\u0020\\u0020\
 set fillchars=vert:\\u2503
 set mouse=a
 set showcmd
-set showmode
-set termguicolors
+set splitbelow
 set warn
 set nowrap
+set foldmethod=marker
+set omnifunc=syntaxcomplete#Complete
 filetype indent on
 filetype plugin on
 syntax enable
 
+" functions {{{
 function! SmartPair(key)
     if a:key == "{"
         return "{}\<left>"
@@ -74,6 +79,14 @@ function! SmartBS()
     endif
 endfunction
 
+function! s:ResetToNetrw() abort
+    for buf in getbufinfo({'buflisted': 1})
+        execute 'bdelete ' . buf.bufnr
+    endfor
+    Explore
+endfunction
+" }}}
+
 inoremap <expr> ( SmartPair("(")
 inoremap <expr> [ SmartPair("[")
 inoremap <expr> { SmartPair("{")
@@ -84,35 +97,44 @@ inoremap <expr> ' SmartPair("'")
 inoremap <expr> " SmartPair('"')
 inoremap <expr> <CR> SmartCR()
 inoremap <expr> <BS> SmartBS()
-inoremap <C-o> <esc>O
-inoremap <C-x> <C-o>
 
 nnoremap <C-a> ggVG
-nnoremap <leader>t :term<CR>
 nnoremap <silent> <leader>m :make<CR>:cwindow<CR>
+nnoremap <leader>t :term<CR>
 nnoremap <leader>e :Ve<CR>
 nnoremap <leader>x :%!xxd -g 1<CR>:setlocal syntax=xxd<CR>:syntax match xxdNull /\<00\>/<CR>:highlight xxdNull ctermfg=gray<CR>
+nnoremap <silent> <leader>b :BufPick<CR>
 nnoremap <silent> <C-j> :m+1<CR>==
 nnoremap <silent> <C-k> :m-2<CR>==
 nnoremap <C-d> 15jzz
 nnoremap <C-u> 15kzz
+nnoremap <C-n> 5j
+nnoremap <C-p> 5k
 nnoremap <C-b>n :bnext<CR>
 nnoremap <C-b>p :bprevious<CR>
 nnoremap <C-b>d :bdelete<CR>
 nnoremap <C-b>l :buffers<CR>
+nnoremap <silent> <C-b>e :call <SID>ResetToNetrw()<CR>
 nnoremap <C-,> 3<C-w><
 nnoremap <C-.> 3<C-w>>
 nnoremap zj <C-e>
 nnoremap zk <C-y>
+nnoremap <S-up> <C-a>
+nnoremap <S-down> <C-x>
 
 vnoremap < <gv
 vnoremap > >gv
+vnoremap <leader>h "9y:<C-u>h <C-r>9<CR>
 vnoremap <C-c> "+y
 vnoremap <C-x> <esc>v
 vnoremap <silent> <C-j> :m '>+1<CR>gv=gv
 vnoremap <silent> <C-k> :m '<-2<CR>gv=gv
-vnoremap ~ ~gv
+vnoremap <C-d> 15jzz
+vnoremap <C-u> 15kzz
+vnoremap <C-n> 5j
+vnoremap <C-p> 5k
 
+" emacs remaps {{{
 cnoremap <C-b> <left>
 cnoremap <C-n> <down>
 cnoremap <C-p> <up>
@@ -120,20 +142,25 @@ cnoremap <C-f> <right>
 cnoremap <C-a> <home>
 cnoremap <C-e> <end>
 cnoremap <C-x> <C-f>
-
 snoremap <C-b> <left>
 snoremap <C-n> <down>
 snoremap <C-p> <up>
 snoremap <C-f> <right>
 snoremap <C-a> <home>
 snoremap <C-e> <end>
-snoremap <C-x> <esc>
+tnoremap <C-b> <left>
+tnoremap <C-n> <down>
+tnoremap <C-p> <up>
+tnoremap <C-f> <right>
+tnoremap <C-a> <home>
+tnoremap <C-e> <end>
+" }}}
 
 call plug#begin()
 
 Plug 'tpope/vim-fugitive'
-Plug 'tpope/vim-surround'
 Plug 'tpope/vim-commentary'
+Plug 'tpope/vim-surround'
 Plug 'tpope/vim-sensible'
 Plug 'tpope/vim-abolish'
 Plug 'morhetz/gruvbox'
@@ -141,8 +168,8 @@ Plug 'lilydjwg/colorizer'
 Plug 'junegunn/vim-easy-align'
 Plug 'mattn/emmet-vim'
 Plug 'google/vim-searchindex'
-Plug 'jeetsukumaran/vim-buffergator'
 Plug 'foxerlot/scratch-shell.vim'
+Plug 'airblade/vim-gitgutter'
 
 call plug#end()
 
@@ -150,31 +177,72 @@ colorscheme gruvbox
 xmap ga <Plug>(EasyAlign)
 nmap ga <Plug>(EasyAlign)
 set noautowrite
+set noshowmode
+set signcolumn=no
+set termguicolors
 
-highlight StlInsert  ctermbg=magenta ctermfg=black
-highlight StlVisual  ctermbg=blue ctermfg=black
-highlight StlCommand ctermbg=green ctermfg=black
-highlight StlFile    ctermbg=gray ctermfg=black
-highlight StlNormal  ctermbg=black
+" statusline {{{
+highlight StlModeHl    ctermbg=blue ctermfg=16
+highlight StlModeArrow ctermbg=245 ctermfg=blue
+highlight StlPadHl     ctermbg=245 ctermfg=255
+highlight StlPadArrow  ctermbg=none ctermfg=245
+highlight StlNone      ctermbg=none ctermfg=255
 
-function! ModeHL()
-    if mode() ==# 'i'
-        return '%#StlInsert#'
-    elseif mode() ==# 'v' || mode() ==# 'V' || mode() ==# "\<C-v>"
-        return '%#StlVisual#'
-    elseif mode() ==# 'c'
-        return '%#StlCommand#'
+function! StlMode()
+    let l:mode = mode()
+    let l:short = winwidth(0) < 50
+    if l:mode[0] == "n"
+        highlight StlModeHl ctermbg=lightblue
+        highlight StlModeArrow ctermfg=lightblue
+        return l:short ? "N" : "NORMAL"
+    elseif l:mode[0] == "i"
+        highlight StlModeHl ctermbg=lightgreen
+        highlight StlModeArrow ctermfg=lightgreen
+        return l:short ? "I" : "INSERT"
+    elseif l:mode[0] == "r"
+        highlight StlModeHl ctermbg=red
+        highlight StlModeArrow ctermfg=red
+        return l:short ? "R" : "REPLACE"
+    elseif l:mode[0] == "v"
+        highlight StlModeHl ctermbg=lightmagenta
+        highlight StlModeArrow ctermfg=lightmagenta
+        return l:short ? "V" : "VISUAL"
+    elseif l:mode[0] == "s"
+        highlight StlModeHl ctermbg=magenta
+        highlight StlModeArrow ctermfg=magenta
+        return l:short ? "S" : "SELECT"
+    elseif l:mode[0] == "c"
+        highlight StlModeHl ctermbg=lightcyan
+        highlight StlModeArrow ctermfg=lightcyan
+        return l:short ? "C" : "COMMAND"
+    else
+        return l:short ? "?" : "OTHER"
     endif
-    return "%#StlNormal#"
 endfunction
 
-set statusline=%#StlFile#%f\ %{%ModeHL()%}%m%r%=%{&fileencoding?&fileencoding:&encoding}\ %#StlFile#%S%y[%l\:%c]
+function! StlGit()
+    let head = FugitiveHead()
+    let [a,m,r] = GitGutterGetHunkSummary()
+    return head == "" ? "" : "  " . head . " " . printf('+%d ~%d -%d', a, m, r) . " "
+    return 
+endfunction
 
-augroup VimlOpts
+set statusline=%#StlModeHl#\ %{StlMode()}\ %#StlModeArrow#
+set statusline+=%#StlPadHl#%{StlGit()}%#StlPadArrow#
+set statusline+=%#StlNone#\ %f%m%r%=%S%{&filetype}\ 
+set statusline+=%#StlPadArrow#%#StlPadHl#\ %{&fileencoding?&fileencoding:&encoding}[%{&fileformat}]\ 
+set statusline+=%#StlModeArrow#%#StlModeHl#\ %L-%l\:%c\ 
+" }}}
+
+augroup Atocmds
     autocmd!
+    autocmd FileType qf setlocal nolist
     autocmd filetype vim nnoremap <buffer> <silent> <leader>m :w<CR>:so<CR>
+    autocmd VimEnter * nunmap <space>tc
 augroup END
 
-nnoremap <leader>cc  :ScratchPrompt<CR>
-nnoremap <leader>cm :ScratchPrompt cd ..<CR>
+nnoremap <leader>cc :ScratchPrompt<CR>
 nnoremap <leader>cr :ScratchRepeat<CR>
+nnoremap <leader>ce :ScratchEdit<CR>
+nnoremap <leader>cm :ScratchMake<CR>
+nnoremap <leader>cd :ScratchPrompt cd ..<CR>
