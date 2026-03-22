@@ -134,6 +134,8 @@ vnoremap <C-u> 15kzz
 vnoremap <C-n> 5j
 vnoremap <C-p> 5k
 
+tnoremap <esc> <C-w>N
+
 " emacs remaps {{{
 cnoremap <C-b> <left>
 cnoremap <C-n> <down>
@@ -170,6 +172,7 @@ Plug 'mattn/emmet-vim'
 Plug 'google/vim-searchindex'
 Plug 'foxerlot/scratch-shell.vim'
 Plug 'airblade/vim-gitgutter'
+Plug 'neovimhaskell/haskell-vim'
 
 call plug#end()
 
@@ -180,6 +183,11 @@ set noautowrite
 set noshowmode
 set signcolumn=no
 set termguicolors
+let g:haskell_enable_quantification = 1
+let g:haskell_enable_recursivedo = 1
+let g:haskell_enable_pattern_synonyms = 1
+let g:haskell_indent_if = 2
+let g:haskell_indent_case = 2
 
 " statusline {{{
 highlight StlModeHl    ctermbg=blue ctermfg=16
@@ -239,6 +247,7 @@ augroup Atocmds
     autocmd FileType qf setlocal nolist
     autocmd filetype vim nnoremap <buffer> <silent> <leader>m :w<CR>:so<CR>
     autocmd VimEnter * nunmap <space>tc
+    autocmd FileType lisp setlocal makeprg=sbcl\ --script\ %
 augroup END
 
 nnoremap <leader>cc :ScratchPrompt<CR>
