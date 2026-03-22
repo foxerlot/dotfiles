@@ -6,6 +6,8 @@ alias gcc='gcc-15'
 alias cc='gcc-15'
 alias :q="exit"
 alias :so="source"
+alias :ez="vi ~/.zshrc"
+alias :ev="vi ~/.vimrc"
 
 extract() {
 	case "$1" in
@@ -17,7 +19,7 @@ extract() {
 	esac
 }
 
-PROMPT=" %~ %F{black}$%f "
+PROMPT=" %~ $ "
 
 export PATH="/opt/homebrew/opt/openjdk/bin:$PATH"
 export PATH="/opt/homebrew/Cellar/gcc/15.2.0_1/bin:$PATH"
@@ -25,24 +27,6 @@ export PATH="$HOME/.ghcup/bin:$PATH"
 export EDITOR=vim
 export VISUAL=vim
 export PAGER=less
-alias vi="vim"
+alias vi="$EDITOR"
 
-source $(brew --prefix)/opt/zsh-vi-mode/share/zsh-vi-mode/zsh-vi-mode.plugin.zsh
-
-# The plugin will auto execute this zvm_after_select_vi_mode function
-function zvm_after_select_vi_mode() {
-  case $ZVM_MODE in
-    $ZVM_MODE_NORMAL)
-        PROMPT=" %~ %F{black}$%f "
-    ;;
-    $ZVM_MODE_INSERT)
-        PROMPT=" %~ %F{magenta}$%f "
-    ;;
-    $ZVM_MODE_VISUAL)
-        PROMPT=" %~ %F{blue}$%f "
-    ;;
-    $ZVM_MODE_VISUAL_LINE)
-        PROMPT=" %~ %F{blue}$%f "
-    ;;
-  esac
-}
+bindkey -e
