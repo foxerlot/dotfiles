@@ -93,17 +93,17 @@ inoremap <expr> { SmartPair("{")
 inoremap <expr> ) SmartPair(")")
 inoremap <expr> ] SmartPair("]")
 inoremap <expr> } SmartPair("}")
-inoremap <expr> ' SmartPair("'")
-inoremap <expr> " SmartPair('"')
+" inoremap <expr> ' SmartPair("'")
+" inoremap <expr> " SmartPair('"')
 inoremap <expr> <CR> SmartCR()
 inoremap <expr> <BS> SmartBS()
 
 nnoremap <C-a> ggVG
+nnoremap <silent> <leader>w :execute &colorcolumn == '' ? 'set colorcolumn=80' : 'set colorcolumn='<CR>
 nnoremap <silent> <leader>m :make<CR>:cwindow<CR>
 nnoremap <leader>t :term<CR>
 nnoremap <leader>e :Ve<CR>
 nnoremap <leader>x :%!xxd -g 1<CR>:setlocal syntax=xxd<CR>:syntax match xxdNull /\<00\>/<CR>:highlight xxdNull ctermfg=gray<CR>
-nnoremap <silent> <leader>b :BufPick<CR>
 nnoremap <silent> <C-j> :m+1<CR>==
 nnoremap <silent> <C-k> :m-2<CR>==
 nnoremap <C-d> 15jzz
@@ -171,6 +171,7 @@ Plug 'junegunn/vim-easy-align'
 Plug 'mattn/emmet-vim'
 Plug 'google/vim-searchindex'
 Plug 'foxerlot/scratch-shell.vim'
+Plug 'foxerlot/bufpick.vim'
 Plug 'airblade/vim-gitgutter'
 Plug 'neovimhaskell/haskell-vim'
 
@@ -190,41 +191,41 @@ let g:haskell_indent_if = 2
 let g:haskell_indent_case = 2
 
 " statusline {{{
-highlight StlModeHl    ctermbg=blue ctermfg=16
-highlight StlModeArrow ctermbg=245 ctermfg=blue
-highlight StlPadHl     ctermbg=245 ctermfg=255
-highlight StlPadArrow  ctermbg=none ctermfg=245
-highlight StlNone      ctermbg=none ctermfg=255
+highlight StlModeHl    ctermbg=lightblue ctermfg=16 guibg=#3fcfff guifg=#000000
+highlight StlModeArrow ctermbg=245  ctermfg=lightblue guibg=#8a8a8a guifg=#3fcfff
+highlight StlPadHl     ctermbg=245  ctermfg=255 guibg=#8a8a8a guifg=#eeeeee
+highlight StlPadArrow  ctermbg=none ctermfg=245 guifg=#8a8a8a
+highlight StlNone      ctermbg=none ctermfg=255 guifg=#eeeeee
 
 function! StlMode()
     let l:mode = mode()
     let l:short = winwidth(0) < 50
     if l:mode[0] == "n"
-        highlight StlModeHl ctermbg=lightblue
-        highlight StlModeArrow ctermfg=lightblue
-        return l:short ? "N" : "NORMAL"
+        highlight StlModeHl    ctermbg=lightblue    ctermfg=16 guibg=#3fcfff guifg=#000000
+        highlight StlModeArrow ctermfg=lightblue    guifg=#3fcfff
+        return l:short ? "N" : "ν"
     elseif l:mode[0] == "i"
-        highlight StlModeHl ctermbg=lightgreen
-        highlight StlModeArrow ctermfg=lightgreen
-        return l:short ? "I" : "INSERT"
+        highlight StlModeHl    ctermbg=lightgreen   ctermfg=16 guibg=#80ff80 guifg=#000000
+        highlight StlModeArrow ctermfg=lightgreen   guifg=#80ff80
+        return l:short ? "I" : "ι"
     elseif l:mode[0] == "r"
-        highlight StlModeHl ctermbg=red
-        highlight StlModeArrow ctermfg=red
-        return l:short ? "R" : "REPLACE"
+        highlight StlModeHl    ctermbg=red          ctermfg=16 guibg=#ff0000 guifg=#000000
+        highlight StlModeArrow ctermfg=red          guifg=#ff0000
+        return l:short ? "R" : "ρ"
     elseif l:mode[0] == "v"
-        highlight StlModeHl ctermbg=lightmagenta
-        highlight StlModeArrow ctermfg=lightmagenta
-        return l:short ? "V" : "VISUAL"
+        highlight StlModeHl    ctermbg=lightmagenta ctermfg=16 guibg=#ff80ff guifg=#000000
+        highlight StlModeArrow ctermfg=lightmagenta guifg=#ff80ff
+        return l:short ? "V" : "β"
     elseif l:mode[0] == "s"
-        highlight StlModeHl ctermbg=magenta
-        highlight StlModeArrow ctermfg=magenta
-        return l:short ? "S" : "SELECT"
+        highlight StlModeHl    ctermbg=magenta      ctermfg=16 guibg=#ff00ff guifg=#000000
+        highlight StlModeArrow ctermfg=magenta      guifg=#ff00ff
+        return l:short ? "S" : "σ"
     elseif l:mode[0] == "c"
-        highlight StlModeHl ctermbg=lightcyan
-        highlight StlModeArrow ctermfg=lightcyan
-        return l:short ? "C" : "COMMAND"
+        highlight StlModeHl    ctermbg=lightcyan    ctermfg=16 guibg=#80ffff guifg=#000000
+        highlight StlModeArrow ctermfg=lightcyan    guifg=#80ffff
+        return l:short ? "C" : "ξ"
     else
-        return l:short ? "?" : "OTHER"
+        return l:short ? "?" : "ο"
     endif
 endfunction
 
@@ -248,6 +249,12 @@ augroup Atocmds
     autocmd filetype vim nnoremap <buffer> <silent> <leader>m :w<CR>:so<CR>
     autocmd VimEnter * nunmap <space>tc
     autocmd FileType lisp setlocal makeprg=sbcl\ --script\ %
+    autocmd filetype lisp nnoremap <buffer> <silent> <leader>m :make<CR>
+augroup END
+
+augroup RespectKernelStyle
+  autocmd!
+  autocmd FileType c,cpp,h,cxx,cc,hpp,hxx,hh setlocal noexpandtab shiftwidth=8 tabstop=8 softtabstop=0
 augroup END
 
 nnoremap <leader>cc :ScratchPrompt<CR>
@@ -255,3 +262,5 @@ nnoremap <leader>cr :ScratchRepeat<CR>
 nnoremap <leader>ce :ScratchEdit<CR>
 nnoremap <leader>cm :ScratchMake<CR>
 nnoremap <leader>cd :ScratchPrompt cd ..<CR>
+nnoremap <silent> <leader>b :BufPick<CR>
+
